@@ -21,7 +21,7 @@ st.write("Enter the sensor readings to predict if the process resulted in a **Pa
 uploaded_file = st.file_file("Upload your signal data (CSV)")
 
 if uploaded_file is not None:
-    input_df = pd.read_csv(uploaded_file)
+    input_df = pd.read_csv("signal-data (1).csv")
     st.write("Uploaded Data:")
     st.dataframe(input_df.head())
     
