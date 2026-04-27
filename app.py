@@ -18,10 +18,10 @@ st.title("Signal Data Quality Prediction")
 st.write("Enter the sensor readings to predict if the process resulted in a **Pass** or **Fail**.")
 
 # Note: In a real app with 446 features, you'd likely upload a CSV
-uploaded_file = st.file_file("Upload your signal data (CSV)")
+uploaded_file = st.file_file("signal-data (1).csv")
 
 if uploaded_file is not None:
-    input_df = pd.read_csv("signal-data (1).csv")
+    input_df = pd.read_csv(uploaded_file)
     st.write("Uploaded Data:")
     st.dataframe(input_df.head())
     
