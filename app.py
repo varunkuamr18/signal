@@ -22,11 +22,10 @@ model, scaler = load_artifacts()
 st.title("Signal Data Quality Prediction")
 st.write("Upload sensor data CSV to predict Pass/Fail")
 
-# ✅ CORRECT FUNCTION
 uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
 
 # -------------------------------
-# File Handling
+# Prediction
 # -------------------------------
 if uploaded_file is not None:
     input_df = pd.read_csv(uploaded_file)
@@ -36,23 +35,32 @@ if uploaded_file is not None:
 
     if st.button("Predict"):
         try:
-            # Convert to numpy (important)
-            data = input_df.values
+            # -------------------------------
+            # 🔥 FIX: Remove non-numeric columns (like datetime)
+            # -------------------------------
+            numeric_df = input_df.select_dtypes(include=[np.number])
 
-            # Scale
-            scaled_data = scaler.transform(data)
+            # Check if empty after filtering
+            if numeric_df.shape[1] == 0:
+                st.error("No numeric columns found. Please upload valid data.")
+            else:
+                # Convert to numpy
+                data = numeric_df.values
 
-            # Predict
-            prediction = model.predict(scaled_data)
+                # Scale
+                scaled_data = scaler.transform(data)
 
-            # Add result
-            input_df['Prediction'] = np.where(prediction == -1, 'Pass', 'Fail')
+                # Predict
+                prediction = model.predict(scaled_data)
 
-            st.success("Predictions completed!")
-            st.dataframe(input_df)
+                # Add result column to original dataframe
+                input_df['Prediction'] = np.where(prediction == -1, 'Pass', 'Fail')
+
+                st.success("Predictions completed!")
+                st.dataframe(input_df)
 
         except Exception as e:
             st.error(f"Error in prediction: {e}")
 
 else:
-    st.info("Please upload a CSV file containing the sensor data features.")
+    st.info("Please upload a CSV file containing the sensor data.")
